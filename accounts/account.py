@@ -5,11 +5,9 @@ class Account:
         self.balance = principle
         self.principle = principle
         self.monthly = monthly
-        self.APY = APY/12
+        self.APY = APY
+        self.rate = APY/12
         self.name = name
-
-    def step_month(self):
-        self.balance += self.balance * (self.APY/12)
 
     def interest(self):
         return self.balance - self.principle

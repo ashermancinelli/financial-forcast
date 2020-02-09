@@ -4,7 +4,13 @@ from collections import namedtuple
 from .account import Account
 
 class Asset(Account):
-    pass
+
+    def __init__(self, principle, monthly, APY, name):
+        super().__init__(principle, monthly, APY, name)
+
+    def step_month(self):
+        self.balance += self.monthly
+        self.balance *= 1 + self.rate
 
 class PNNL401K(Asset):
 
