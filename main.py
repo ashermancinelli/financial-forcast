@@ -7,6 +7,7 @@ import functools
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+ax = plt.axes()
 
 from accounts import Debt, Asset, Portfolio, Loan, PNNL401K
 
@@ -29,14 +30,6 @@ def main(months, interval, plot):
     print(pf)
 
     for month in range(months):
-        if 'DP17' in pf.debts.keys():
-            if pf.debts['DP17'].balance == 0:
-                pf.assets['S0'].monthly += pf.debts['DP17'].monthly
-                del pf.debts['DP17']
-        if 'DP18' in pf.debts.keys():
-            if pf.debts['DP18'].balance == 0:
-                pf.assets['S0'].monthly += pf.debts['DP18'].monthly
-                del pf.debts['DP18']
 
         if month == 2:
             pf.extend([
@@ -45,7 +38,7 @@ def main(months, interval, plot):
                 # Loan(1073, monthly=0, APY=0.0505, name='DU18'), # paid off 2/6
                 Loan(4500, monthly=10, APY=0.0445, name='DS17'),
                 # Loan(2200, monthly=0, APY=0.0445, name='DU17'), # paid off 2/6
-                Loan(3500, monthly=10,   APY=0.0376, name='DS16'),
+                Loan(3500, monthly=10, APY=0.0376, name='DS16'),
 
                 # Private parent plus loans
                 # Loan(21801.79, monthly=500, APY=0.0631, name='DP17'),
@@ -58,15 +51,14 @@ def main(months, interval, plot):
 
         if month == 24:
             pf.assets['S0'].monthly += 100
-            if 'DP17' in pf.debts.keys():
-                pf.debts['DP17'].monthly += 100
+            pf.debts['DP17'].monthly += 100
             pf.debts['DP18'].monthly += 100
             pf.assets['PNNL401k'].monthly += 100
+            pf.append(Loan(15000, monthly=500, APY=0.053, name='CarLoan'))
 
         if month == 36:
             pf.assets['S0'].monthly += 100
-            if 'DP17' in pf.debts.keys():
-                pf.debts['DP17'].monthly += 100
+            pf.debts['DP17'].monthly += 100
             pf.debts['DP18'].monthly += 100
             pf.assets['PNNL401k'].monthly += 100
 
@@ -76,9 +68,14 @@ def main(months, interval, plot):
             print(f'Month number {1+month}:\t{pf}')
             i = 0
 
-    if plot:
-        pf.plt()
+        if plot:
+            pf.plt()
+            # pf.plt_finegrain()
+
+    print('Done!')
+
+    # Keep plot open at the end
+    plt.show(block=True)
 
 if __name__ == '__main__':
     main()
-

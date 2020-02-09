@@ -3,6 +3,7 @@ from functools import reduce
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+import time
 
 from .asset import Asset
 from .debt import Debt
@@ -15,16 +16,23 @@ class Portfolio:
         self.assets = { a.name: a for a in _assets }
         self.debts = { a.name: a for a in _debts }
 
+        # For plotting accounts grouped by type
         self.asset_history = list()
         self.debt_history = list()
 
-        self._step_history()
+        # For plotting all accounts individually
+        self.asset_history_finegrain = list()
+        self.debt_history_finegrain = list()
 
-    def append_account(self, acc):
+        self._step_history()
+        self.first_draw = True
+        self.used_names = []
+
+    def append(self, acc):
         if isinstance(acc, Asset):
-            self.assets.append(acc)
+            self.assets[acc.name] = acc
         elif isinstance(acc, Debt):
-            self.debts.append(acc)
+            self.debts[acc.name] = acc
 
     def extend(self, accs):
         for acc in accs:
@@ -51,6 +59,11 @@ class Portfolio:
             f'Net Worth: {self.networth:.2f}'
 
     def _step_history(self):
+        self.asset_history_finegrain.append(
+                { k: v.balance for k, v in self.assets.items() })
+        self.debt_history_finegrain.append(
+                { k: v.balance for k, v in self.debts.items() })
+
         self.asset_history.append(self.asset_total)
         self.debt_history.append(self.debt_total)
 
@@ -63,19 +76,55 @@ class Portfolio:
 
         self._step_history()
 
+    def plt_finegrain(self):
+        xs = list(range(len(self.asset_history)))
+
+        for name in self.assets.keys():
+            history = list()
+            for i in self.asset_history_finegrain:
+                if name in i.keys():
+                    history.append(i[name])
+                else:
+                    history.append(0)
+            plt.plot(xs, history, label=name)
+            plt.pause(0.0001)
+
+        for name in self.debts.keys():
+            history = list()
+            for i in self.debt_history_finegrain:
+                if name in i.keys():
+                    history.append(i[name])
+                else:
+                    history.append(0)
+
+            plt.plot(xs, history, 'r-', label=name)
+            plt.pause(0.0001)
+
+        if self.first_draw:
+            plt.ylabel('$ Value')
+            plt.xlabel('Months')
+            plt.title('Debts Finegrain')
+            plt.legend()
+            self.first_draw = False
+
     def plt(self):
         xs = list(range(len(self.asset_history)))
 
-        plt.plot(xs, self.asset_history, label='Assets')
-        plt.plot(xs, self.debt_history, label='Debts')
+        plt.plot(xs, self.asset_history, 'g-', label='Assets')
+        plt.pause(0.0001)
+        plt.plot(xs, self.debt_history, 'b-', label='Debts')
+        plt.pause(0.0001)
         nw_history = list(map(
                 lambda a: a[0] - a[1],
                 zip(self.asset_history, self.debt_history)
                 ))
 
-        plt.plot(xs, nw_history, label='Net Worth')
+        plt.plot(xs, nw_history, 'r-', label='Net Worth')
+        plt.pause(0.0001)
 
-        plt.ylabel('$ Value')
-        plt.xlabel('Months')
-        plt.legend()
-        plt.show()
+        if self.first_draw:
+            plt.ylabel('$ Value')
+            plt.xlabel('Months')
+            plt.title('Overview plot')
+            plt.legend()
+            self.first_draw = False
