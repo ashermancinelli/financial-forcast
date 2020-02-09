@@ -12,13 +12,22 @@ ax = plt.axes()
 from accounts import Debt, Asset, Portfolio, Loan, PNNL401K
 
 @click.command()
-@click.option('-m', '--months', type=int, default=12,
+@click.option('-m', '--months', type=int, default=-1,
+        help='Number of months to simulate')
+@click.option('-y', '--years', type=int, default=-1,
         help='Number of months to simulate')
 @click.option('-i', '--interval', type=int, default=0,
         help='Number of iterations to skip between printing')
 @click.option('-p', '--plot', is_flag=True, default=False,
         help='Flag to plot pf over time period')
-def main(months, interval, plot):
+def main(months, years, interval, plot):
+
+    if years == -1 and months == -1:
+        assert False, 'Must set either months or years.'
+        exit(1)
+
+    if years != -1:
+        months = years * 12
 
     pf = Portfolio([
             Loan(2243, monthly=20,  APY=0.0367, name='DU16'),
@@ -74,8 +83,9 @@ def main(months, interval, plot):
 
     print('Done!')
 
-    # Keep plot open at the end
-    plt.show(block=True)
+    if plot:
+        # Keep plot open at the end
+        plt.show(block=True)
 
 if __name__ == '__main__':
     main()
