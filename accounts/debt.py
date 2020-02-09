@@ -11,6 +11,9 @@ class Debt(Account):
             self.rate = -1
         self.balance *= 1 + self.rate
 
+    def one_time_payment(self, amount):
+        self.balance -= amount
+    
 class Loan(Debt):
 
     def __init__(self, principle, monthly, APY, name):

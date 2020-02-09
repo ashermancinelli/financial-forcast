@@ -50,13 +50,18 @@ def main(months, years, interval, plot):
                 Loan(3500, monthly=10, APY=0.0376, name='DS16'),
 
                 # Private parent plus loans
-                # Loan(21801.79, monthly=500, APY=0.0631, name='DP17'),
-                Loan(0, monthly=500, APY=0.0631, name='DP17'),
+                Loan(21801.79, monthly=500, APY=0.0631, name='DP17'),
+                # Loan(0, monthly=500, APY=0.0631, name='DP17'),
                 Loan(20888.36, monthly=500, APY=0.0700, name='DP18'),
                 
                 PNNL401K(0, monthly=200, APY=0.065, name='PNNL401k'),
                 ])
             pf.assets['S0'].monthly = 300
+
+        if month == 8:
+            pf.debts['DP17'].one_time_payment(25000)
+            pf.debts['DS17'].monthly = 250
+            pf.debts['DS16'].monthly = 250
 
         if month == 24:
             pf.assets['S0'].monthly += 100

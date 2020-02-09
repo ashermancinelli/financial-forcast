@@ -12,6 +12,9 @@ class Asset(Account):
         self.balance += self.monthly
         self.balance *= 1 + self.rate
 
+    def one_time_payment(self, amount):
+        self.balance += amount
+    
 class PNNL401K(Asset):
 
     '''

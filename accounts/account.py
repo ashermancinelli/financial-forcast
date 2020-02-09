@@ -9,6 +9,12 @@ class Account:
         self.rate = APY/12
         self.name = name
 
+    def one_time_payment(self, amount):
+        raise NotImplementedError 
+    
+    def step_month(self, amount):
+        raise NotImplementedError 
+
     def interest(self):
         return self.balance - self.principle
 

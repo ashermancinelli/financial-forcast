@@ -97,14 +97,18 @@ class Portfolio:
                 else:
                     history.append(0)
 
-            plt.plot(xs, history, 'r-', label=name)
+            plt.plot(xs, history, label=name)
             plt.pause(0.0001)
 
+        ax = plt.gca()
+        leg = ax.get_legend()
+        if leg:
+            leg.remove()
+        plt.legend([*self.assets.keys(), *self.debts.keys()])
         if self.first_draw:
             plt.ylabel('$ Value')
             plt.xlabel('Months')
             plt.title('Debts Finegrain')
-            plt.legend()
             self.first_draw = False
 
     def plt(self):
