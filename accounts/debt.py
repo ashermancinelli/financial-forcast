@@ -4,6 +4,7 @@ from .account import Account
 class Debt(Account):
 
     def step_month(self, additional_payment=0):
+        super().step_month()
         self.balance -= self.monthly
         self.balance -= additional_payment
         if self.balance <= 0:
